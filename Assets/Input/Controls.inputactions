@@ -1,0 +1,172 @@
+{
+    "name": "Controls",
+    "maps": [
+        {
+            "name": "General",
+            "id": "ed452ca7-7f8f-4a6d-b4bf-d7157851f0f2",
+            "actions": [
+                {
+                    "name": "Movement",
+                    "type": "Value",
+                    "id": "7925d09e-e198-49d8-9562-5cc558079ec6",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "8c9492db-fff8-4602-b5c3-e1bfec327257",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Camera Movement",
+                    "type": "Value",
+                    "id": "1400b807-2820-48cc-832a-72f9ec5052b5",
+                    "expectedControlType": "Vector2",
+                    "processors": "ScaleVector2(x=0.1,y=-0.1)",
+                    "interactions": ""
+                },
+                {
+                    "name": "Fire",
+                    "type": "Button",
+                    "id": "c7cfb4d8-14a8-44f8-bfca-89b6f3e8d6b9",
+                    "expectedControlType": "Button",
+                    "processors": "ScaleVector2(x=0.1,y=-0.1)",
+                    "interactions": ""
+                },
+                {
+                    "name": "ADS",
+                    "type": "Button",
+                    "id": "624f0512-d058-4414-91ad-2a229edba0d4",
+                    "expectedControlType": "Button",
+                    "processors": "ScaleVector2(x=0.1,y=-0.1)",
+                    "interactions": ""
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "b6e90416-723f-4390-bb9d-41f5c6517673",
+                    "expectedControlType": "Button",
+                    "processors": "ScaleVector2(x=0.1,y=-0.1)",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "Keyboard",
+                    "id": "688add96-df9c-4ecd-8071-6c43d9e1a959",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Movement",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "0367cfb9-20e5-4ea3-ad20-72f3147a9d79",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "c62fd0bf-f72a-4b2b-ac6a-9ad1f4c01177",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "b715cdfc-ae78-4907-aa40-522d0c49e801",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "68374c42-6322-49a2-8caf-721c259a11b0",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "3e247170-0f32-4a5f-8e75-fe4b79ced832",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d9f211e0-736a-4caa-b44e-0846311c0d4d",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Camera Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c2611267-6bdc-4731-8128-31379d85a775",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "64220a81-6f65-4040-bdce-1c450fd3c8b9",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ADS",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f1f39ed9-c86f-40cb-b732-06289b947f49",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
