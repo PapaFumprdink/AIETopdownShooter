@@ -65,6 +65,14 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": ""ScaleVector2(x=0.1,y=-0.1)"",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Cycle Weapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""79db9a6b-ebb3-4b5b-bd88-8e95a6547f43"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": ""ScaleVector2(x=0.1,y=-0.1)"",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -177,6 +185,28 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""action"": ""Reload"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0a26aec1-4383-4568-adcf-3e10a5d3ae8e"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cycle Weapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b1fd7e5f-cbb6-4288-8bba-6eb1b5ac9734"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=-1)"",
+                    ""groups"": """",
+                    ""action"": ""Cycle Weapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -191,6 +221,7 @@ public class @Controls : IInputActionCollection, IDisposable
         m_General_Fire = m_General.FindAction("Fire", throwIfNotFound: true);
         m_General_ADS = m_General.FindAction("ADS", throwIfNotFound: true);
         m_General_Reload = m_General.FindAction("Reload", throwIfNotFound: true);
+        m_General_CycleWeapon = m_General.FindAction("Cycle Weapon", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -246,6 +277,7 @@ public class @Controls : IInputActionCollection, IDisposable
     private readonly InputAction m_General_Fire;
     private readonly InputAction m_General_ADS;
     private readonly InputAction m_General_Reload;
+    private readonly InputAction m_General_CycleWeapon;
     public struct GeneralActions
     {
         private @Controls m_Wrapper;
@@ -256,6 +288,7 @@ public class @Controls : IInputActionCollection, IDisposable
         public InputAction @Fire => m_Wrapper.m_General_Fire;
         public InputAction @ADS => m_Wrapper.m_General_ADS;
         public InputAction @Reload => m_Wrapper.m_General_Reload;
+        public InputAction @CycleWeapon => m_Wrapper.m_General_CycleWeapon;
         public InputActionMap Get() { return m_Wrapper.m_General; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -283,6 +316,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @Reload.started -= m_Wrapper.m_GeneralActionsCallbackInterface.OnReload;
                 @Reload.performed -= m_Wrapper.m_GeneralActionsCallbackInterface.OnReload;
                 @Reload.canceled -= m_Wrapper.m_GeneralActionsCallbackInterface.OnReload;
+                @CycleWeapon.started -= m_Wrapper.m_GeneralActionsCallbackInterface.OnCycleWeapon;
+                @CycleWeapon.performed -= m_Wrapper.m_GeneralActionsCallbackInterface.OnCycleWeapon;
+                @CycleWeapon.canceled -= m_Wrapper.m_GeneralActionsCallbackInterface.OnCycleWeapon;
             }
             m_Wrapper.m_GeneralActionsCallbackInterface = instance;
             if (instance != null)
@@ -305,6 +341,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @Reload.started += instance.OnReload;
                 @Reload.performed += instance.OnReload;
                 @Reload.canceled += instance.OnReload;
+                @CycleWeapon.started += instance.OnCycleWeapon;
+                @CycleWeapon.performed += instance.OnCycleWeapon;
+                @CycleWeapon.canceled += instance.OnCycleWeapon;
             }
         }
     }
@@ -317,5 +356,6 @@ public class @Controls : IInputActionCollection, IDisposable
         void OnFire(InputAction.CallbackContext context);
         void OnADS(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
+        void OnCycleWeapon(InputAction.CallbackContext context);
     }
 }

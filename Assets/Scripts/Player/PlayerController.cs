@@ -11,11 +11,13 @@ public class PlayerController : MonoBehaviour, IMovementProvider, IWeaponInputPr
     public event Action JumpEvent;
     public event Action FireEvent;
     public event Action ReloadEvent;
+    public event Action<int> CycleWeaponEvent;
 
     [SerializeField] private Transform m_LookContainer;
 
     private Controls m_Controls;
     private Camera m_MainCamera;
+    private int m_WeaponIndex;
 
     public Vector2 MovementDirection => m_Controls.General.Movement.ReadValue<Vector2>();
     public bool WantsToFire => m_Controls.General.Fire.ReadValue<float>() > Deadzone;
@@ -31,6 +33,7 @@ public class PlayerController : MonoBehaviour, IMovementProvider, IWeaponInputPr
         m_Controls.General.Jump.performed += (ctx) => JumpEvent?.Invoke();
         m_Controls.General.Fire.performed += (ctx) => FireEvent?.Invoke();
         m_Controls.General.Reload.performed += (ctx) => ReloadEvent?.Invoke();
+        m_Controls.General.CycleWeapon.performed += (ctx) => CycleWeaponEvent?.Invoke(m_WeaponIndex += (int)ctx.ReadValue<float>());
     }
 
     private void OnEnable()

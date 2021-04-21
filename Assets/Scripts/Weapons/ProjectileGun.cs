@@ -57,14 +57,27 @@ public class ProjectileGun : MonoBehaviour
 
         InputProvider.FireEvent += () =>
         {
-            if (m_Singlefire)
+            if (m_Singlefire && enabled && gameObject.activeSelf)
             {
                 Shoot();
             }
         };
         InputProvider.ReloadEvent += Reload;
 
-        Reload();
+        InputProvider.CycleWeaponEvent += (index) =>
+        {
+            var clampedIndex = Util.Loop(index, transform.parent.childCount);
+            gameObject.SetActive(transform.GetSiblingIndex() == clampedIndex);
+            print($"{index} || {clampedIndex}");
+        };
+
+        gameObject.SetActive(transform.GetSiblingIndex() == 0);
+        m_CurrentMagazine = m_MagazineSize;
+    }
+
+    private void OnDisable()
+    {
+        m_IsReloading = false;
     }
 
     private void Update()
@@ -126,7 +139,7 @@ public class ProjectileGun : MonoBehaviour
 
     public void Reload ()
     {
-        if (m_CurrentMagazine < m_MagazineSize && !m_IsReloading)
+        if (m_CurrentMagazine < m_MagazineSize && !m_IsReloading && enabled && gameObject.activeSelf)
         {
             StartCoroutine(ReloadRoutine());
         }
