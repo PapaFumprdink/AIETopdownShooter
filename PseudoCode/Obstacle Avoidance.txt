@@ -1,0 +1,46 @@
+Pseudocode for Obstacle avoidance.
+
+in vector position
+in vector initialDirection
+in number checkDistance
+in number checkAngle
+
+out vector targetDirection
+
+if (not raycast(position, initialDirection, checkDistance))
+	targetDirection = initialDirection
+	return
+endif
+
+leftDirection = rotateVector(initialDirection, -checkAngle)
+rightDirection = rotateVector(initialDirection, checkAngle)
+
+leftHit = raycast(position, leftDirection, checkDistance)
+rightHit = raycast(position, rightDirection, checkDistance)
+
+// Move left if there is an obstacle left and not right.
+if (leftHit and not rightHit)
+	targetDirection = rightDirection
+	return
+endif
+
+// Move left if there is an obstacle right and not left.
+if (rightHit and not leftHit)
+	targetDirection = leftDirection
+	return
+endif
+
+// Move left if the left obstacle is further away than right.
+if (leftHit.distance greater than rightHit.distance)
+	targetDirection = leftDirection
+	return
+endif
+
+// Move right if the right obstacle is further away than left.
+if (rightHit.distance greater than leftHit.distance)
+	targetDirection = rightDirection
+	return
+endif
+
+targetDirection = 0
+return

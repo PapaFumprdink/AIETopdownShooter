@@ -17,15 +17,12 @@ public class ProjectileGun : MonoBehaviour
     [SerializeField] private float m_Spray;
 
     [Space]
-    [SerializeField] private float m_AimDownSightsTime;
-    [SerializeField] private AnimationCurve m_AimDownSightsCurve;
-
-    [Space]
     [SerializeField] private int m_MagazineSize;
     [SerializeField] private float m_Reloadtime;
 
     [Space]
     [SerializeField] private Transform m_Muzzle;
+    [SerializeField] private Transform m_RotationContainer;
 
     [Space]
     [SerializeField] private CinemachineImpulseSource m_ShakeSource;
@@ -34,8 +31,6 @@ public class ProjectileGun : MonoBehaviour
     private int m_CurrentMagazine;
     private float m_NextFireTime;
     private bool m_IsReloading;
-    private bool m_IsAimDownSights;
-    private float m_AimDownSightsPercent;
 
     public GameObject ProjectilePrefab => m_ProjectilePrefab;
     public int ProjectileCount => m_ProjectileCount;
@@ -44,7 +39,6 @@ public class ProjectileGun : MonoBehaviour
     public float FireRate => m_Firerate;
     public bool IsSingleFire => m_Singlefire;
     public float Spray => m_Spray;
-    public float AimDownSightsTime => m_AimDownSightsTime;
     public int MagazineSize => m_MagazineSize;
     public int CurrentMagazine => m_CurrentMagazine;
     public float ReloadDuration => m_Reloadtime;
@@ -53,8 +47,10 @@ public class ProjectileGun : MonoBehaviour
 
     private void Awake()
     {
+        // Gets the input provider from parental chain.
         InputProvider = GetComponentInParent<IWeaponInputProvider>();
 
+        // Subscribes to nessecary events.
         InputProvider.FireEvent += () =>
         {
             if (m_Singlefire && enabled && gameObject.activeSelf)
@@ -64,19 +60,14 @@ public class ProjectileGun : MonoBehaviour
         };
         InputProvider.ReloadEvent += Reload;
 
-        InputProvider.CycleWeaponEvent += (index) =>
-        {
-            var clampedIndex = Util.Loop(index, transform.parent.childCount);
-            gameObject.SetActive(transform.GetSiblingIndex() == clampedIndex);
-            print($"{index} || {clampedIndex}");
-        };
-
-        gameObject.SetActive(transform.GetSiblingIndex() == 0);
+        // Set the current magazine so the player does not have to initially reload.
         m_CurrentMagazine = m_MagazineSize;
     }
 
     private void OnDisable()
     {
+        // Sets the reloading flag, otherwise when re-enabled the weapon will still be 'reloading' forever,
+        // as the coroutine was canceled but the flag wasn't set.
         m_IsReloading = false;
     }
 
@@ -89,26 +80,34 @@ public class ProjectileGun : MonoBehaviour
                 Shoot();
             }
 
-            m_IsAimDownSights = InputProvider.IsAimingDownSights;
+            // Sets the look container to where the entity is currently facing, using trig instead of transform.right is just in case
+            // unity gets the same rotation through a different axis and ruins everything.
+            var lookAngle = Mathf.Atan2(InputProvider.Direction.y, InputProvider.Direction.x) * Mathf.Rad2Deg;
+            m_RotationContainer.rotation = Quaternion.Euler(0, 0, lookAngle);
 
         }
         else
         {
+            // If we dont have an input provider, keep looking, just in case....
             InputProvider = GetComponentInParent<IWeaponInputProvider>();
         }
     }
 
     public void Shoot ()
     {
+        // Only shoot if enough time has passed since the last shot.
         if (Time.time > m_NextFireTime)
         {
             StartCoroutine(ShootRoutine());
+
+            // set the next fire time based on the firerate, scales on how many bullets are in the burst function.
             m_NextFireTime = Time.time + (60f / m_Firerate) * m_BurstCount;
         }
     }
 
     private IEnumerator ShootRoutine()
     {
+        // Itterates for each burst count
         for (int i = 0; i < m_BurstCount; i++)
         {
             if (m_CurrentMagazine > 0)
@@ -129,6 +128,7 @@ public class ProjectileGun : MonoBehaviour
                 m_CurrentMagazine--;
                 yield return new WaitForSeconds(60f / m_BurstRate);
             }
+            // If we have run out of bullets in our magazine, reload and cancel the routine.
             else
             {
                 Reload();
@@ -139,7 +139,8 @@ public class ProjectileGun : MonoBehaviour
 
     public void Reload ()
     {
-        if (m_CurrentMagazine < m_MagazineSize && !m_IsReloading && enabled && gameObject.activeSelf)
+        // Only reload if the magazine isnt full, we arent already reloading, we are enabled
+        if (m_CurrentMagazine < m_MagazineSize && !m_IsReloading && isActiveAndEnabled)
         {
             StartCoroutine(ReloadRoutine());
         }

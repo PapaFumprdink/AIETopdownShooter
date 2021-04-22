@@ -26,13 +26,16 @@ public class Health : MonoBehaviour, IDamagable
 
     private void Update()
     {
+        // Only regen if enough time has passed since the last damage time and the percentage of our current health is below the regen cap.
         if (Time.time > LastDamageTime + m_RegenerationDelay && NormalizedHealth < m_RegenerationPercentCap)
         {
+            // If the regen increase will go over the regeneration cap, clamp it at the cap
             if ((m_CurrentHealth + m_RegenerationRate * Time.deltaTime) / m_MaxHealth > m_RegenerationPercentCap)
             {
                 m_CurrentHealth = m_RegenerationPercentCap * m_MaxHealth;
                 HealthChangeEvent?.Invoke();
             }
+            // Otherwise, apply the health regeneration
             else
             {
                 m_CurrentHealth += m_RegenerationRate * Time.deltaTime;
@@ -50,6 +53,7 @@ public class Health : MonoBehaviour, IDamagable
         HealthChangeEvent?.Invoke();
         DamageEvent?.Invoke(damager, damage, point, direction);
 
+        // If we have run out of health, die.
         if (m_CurrentHealth <= 0)
         {
             Kill(damager, damage, point, direction);
@@ -60,6 +64,7 @@ public class Health : MonoBehaviour, IDamagable
     {
         DeathEvent?.Invoke(killer, damage, point, direction);
 
+        // Disable object, as not to break any references to it.
         gameObject.SetActive(false);
     }
 }

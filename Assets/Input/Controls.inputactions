@@ -52,14 +52,6 @@
                     "expectedControlType": "Button",
                     "processors": "ScaleVector2(x=0.1,y=-0.1)",
                     "interactions": ""
-                },
-                {
-                    "name": "Cycle Weapon",
-                    "type": "Button",
-                    "id": "79db9a6b-ebb3-4b5b-bd88-8e95a6547f43",
-                    "expectedControlType": "Button",
-                    "processors": "ScaleVector2(x=0.1,y=-0.1)",
-                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -170,28 +162,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Reload",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0a26aec1-4383-4568-adcf-3e10a5d3ae8e",
-                    "path": "<Keyboard>/x",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Cycle Weapon",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b1fd7e5f-cbb6-4288-8bba-6eb1b5ac9734",
-                    "path": "<Keyboard>/z",
-                    "interactions": "",
-                    "processors": "Scale(factor=-1)",
-                    "groups": "",
-                    "action": "Cycle Weapon",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
