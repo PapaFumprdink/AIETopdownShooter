@@ -10,13 +10,13 @@ public class Health : MonoBehaviour, IDamagable
     public event IDamagable.DamageDelegate DeathEvent;
     public event Action HealthChangeEvent;
 
-    [SerializeField] private float m_MaxHealth;
-    [SerializeField] private float m_CurrentHealth;
+    [SerializeField] private int m_MaxHealth;
+    [SerializeField] private int m_CurrentHealth;
 
     [Space]
-    [SerializeField] private float m_RegenerationRate;
-    [SerializeField] private float m_RegenerationDelay;
-    [SerializeField][Range(0f, 1f)] private float m_RegenerationPercentCap;
+    [SerializeField] private GameObject m_DeathFX;
+
+    private float m_NextRegenTime;
 
     public float MaxHealth => m_MaxHealth;
     public float CurrentHealth => m_CurrentHealth;
@@ -24,27 +24,20 @@ public class Health : MonoBehaviour, IDamagable
     public GameObject LastDamager { get; private set; }
     public float LastDamageTime { get; private set; }
 
-    private void Update()
+    private void OnEnable()
     {
-        // Only regen if enough time has passed since the last damage time and the percentage of our current health is below the regen cap.
-        if (Time.time > LastDamageTime + m_RegenerationDelay && NormalizedHealth < m_RegenerationPercentCap)
+        if (m_DeathFX)
         {
-            // If the regen increase will go over the regeneration cap, clamp it at the cap
-            if ((m_CurrentHealth + m_RegenerationRate * Time.deltaTime) / m_MaxHealth > m_RegenerationPercentCap)
-            {
-                m_CurrentHealth = m_RegenerationPercentCap * m_MaxHealth;
-                HealthChangeEvent?.Invoke();
-            }
-            // Otherwise, apply the health regeneration
-            else
-            {
-                m_CurrentHealth += m_RegenerationRate * Time.deltaTime;
-                HealthChangeEvent?.Invoke();
-            }
+            // If, for some reason revived, reparent the fx.
+            m_DeathFX.transform.parent = transform;
+            m_DeathFX.transform.localPosition = Vector3.zero;
+
+            // Disable death fx If I forgot to in editor.
+            if (m_DeathFX) m_DeathFX.SetActive(false);
         }
     }
 
-    public void Damage(GameObject damager, float damage, Vector3 point, Vector3 direction)
+    public void Damage(GameObject damager, int damage, Vector3 point, Vector3 direction)
     {
         m_CurrentHealth -= damage;
         LastDamager = damager;
@@ -60,11 +53,19 @@ public class Health : MonoBehaviour, IDamagable
         }
     }
 
-    public void Kill(GameObject killer, float damage, Vector3 point, Vector3 direction)
+    public void Kill(GameObject killer, int damage, Vector3 point, Vector3 direction)
     {
         DeathEvent?.Invoke(killer, damage, point, direction);
 
-        // Disable object, as not to break any references to it.
+        if (m_DeathFX)
+        {
+            // Detach so it does not disable with this object.
+            m_DeathFX.transform.parent = null;
+            // Enable death fx.
+            m_DeathFX.SetActive(true);
+        }
+
+        // Disable object instead of destroy, as not to break any references to it.
         gameObject.SetActive(false);
     }
 }

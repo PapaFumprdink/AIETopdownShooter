@@ -11,7 +11,6 @@ public class EnemyActions : MonoBehaviour, IMovementProvider, IWeaponInputProvid
     public bool UseCursor => false;
     public Vector2 Direction { get; set; }
 
-    public event Action JumpEvent;
     public event Action FireEvent;
     public event Action ReloadEvent;
 
@@ -29,7 +28,7 @@ public class EnemyActions : MonoBehaviour, IMovementProvider, IWeaponInputProvid
         m_Damagable.DamageEvent += OnDamage;
     }
 
-    private void OnDamage(GameObject damager, float damage, Vector3 point, Vector3 direction)
+    private void OnDamage(GameObject damager, int damage, Vector3 point, Vector3 direction)
     {
         if (damage >= 0)
         {

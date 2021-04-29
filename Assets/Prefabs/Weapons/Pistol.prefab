@@ -10252,8 +10252,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 52088505
+  m_SortingLayer: 5
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 154b11a31fe62eb42a6fc4732f23556c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -10319,31 +10319,6 @@ MonoBehaviour:
   m_Firerate: 640
   m_Singlefire: 1
   m_Spray: 3
-  m_AimDownSightsTime: 0.25
-  m_AimDownSightsCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   m_MagazineSize: 14
   m_Reloadtime: 1.5
   m_Muzzle: {fileID: 5560450107933703631}

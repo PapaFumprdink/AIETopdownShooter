@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour, IMovementProvider, IWeaponInputPr
 {
     private const float Deadzone = 0.5f;
 
-    public event Action JumpEvent;
     public event Action FireEvent;
     public event Action ReloadEvent;
 
@@ -28,7 +27,6 @@ public class PlayerController : MonoBehaviour, IMovementProvider, IWeaponInputPr
         // Instantates the controls and subscribes to all used events.
         m_Controls = new Controls();
 
-        m_Controls.General.Jump.performed += (ctx) => JumpEvent?.Invoke();
         m_Controls.General.Fire.performed += (ctx) => FireEvent?.Invoke();
         m_Controls.General.Reload.performed += (ctx) => ReloadEvent?.Invoke();
     }

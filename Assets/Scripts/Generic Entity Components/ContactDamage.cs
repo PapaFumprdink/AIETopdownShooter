@@ -6,7 +6,7 @@ public class ContactDamage : MonoBehaviour
 {
     public event System.Action<IDamagable> DamageDeltEvent;
 
-    [SerializeField] private float m_Damage;
+    [SerializeField] private int m_Damage;
     [SerializeField] private GameObject m_Damager;
 
     public float LastDamageDeltTime { get; private set; }

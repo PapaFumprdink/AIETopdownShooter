@@ -10,7 +10,7 @@ public class Projectile : MonoBehaviour
     private const float SkinWidth = 0.1f;
 
     [SerializeField] private float m_Velocity;
-    [SerializeField] private float m_Damage;
+    [SerializeField] private int m_Damage;
     [SerializeField] private GameObject m_HitFX;
 
     private Rigidbody2D m_Rigidbody;
