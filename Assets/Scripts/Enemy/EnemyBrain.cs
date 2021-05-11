@@ -8,13 +8,14 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public abstract class EnemyBrain : MonoBehaviour
 {
-    [SerializeField] private TargetType[] m_TargetableTypes;
-    [SerializeField] private float m_TargetMaxRange;
-    [SerializeField] private float m_ObstacleAvoidanceRange;
-    [SerializeField] private float m_ObstacleAvoidanceMaxAngle;
+    [SerializeField] protected TargetType[] m_TargetableTypes;
+    [SerializeField] protected float m_TargetMaxRange;
+    [SerializeField] protected float m_ObstacleAvoidanceRange;
+    [SerializeField] protected float m_ObstacleAvoidanceMaxAngle;
 
     public EnemyActions EnemyActions { get; private set; }
     public Rigidbody2D AttachedRigidbody { get; private set; }
+    public bool WantsToFire { get => EnemyActions.WantsToFire; set => EnemyActions.WantsToFire = value; }
 
     public abstract void Think();
 
@@ -95,6 +96,8 @@ public abstract class EnemyBrain : MonoBehaviour
     protected void FaceTowards(MonoBehaviour behaviour) => FaceTowards(behaviour.gameObject);
     protected void FaceTowards(GameObject gameObject) => FaceTowards(gameObject.transform);
     protected void FaceTowards(Transform transform) => FaceTowards(transform.position);
+    protected void FaceTowardsAngle(Quaternion rotation) => FaceTowardsAngle(rotation.z);
+    protected void FaceTowardsAngle(float angle) => FaceTowards(Util.VectorFromAngle(angle) + (Vector2)transform.position);
     protected void FaceTowards(Vector3 position)
     {
         EnemyActions.FaceDirection = (position - transform.position).normalized;
@@ -105,7 +108,7 @@ public abstract class EnemyBrain : MonoBehaviour
         EnemyActions.MovementDirection = Vector2.zero;
     }
 
-    private void OnDrawGizmosSelected()
+    protected virtual void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, m_TargetMaxRange);

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class CursorController : MonoBehaviour
 {
     [SerializeField] private CustomCursor m_CursorData;
-    [SerializeField] private Image m_CursorImage;
+    [SerializeField] private Image[] m_CursorImageLayers;
 
     private void OnEnable()
     {
@@ -25,8 +25,14 @@ public class CursorController : MonoBehaviour
         // Set the cursor's position to the mouse position.
         transform.position = Mouse.current.position.ReadValue();
 
-        // Update the cursors visuals.
-        m_CursorImage.sprite = m_CursorData.CursorIcon;
-        m_CursorImage.fillAmount = m_CursorData.FillPercent;
+        foreach (Image cursorImage in m_CursorImageLayers)
+        {
+            if (cursorImage)
+            {
+                // Update the cursors visuals.
+                cursorImage.sprite = m_CursorData.CursorIcon;
+                cursorImage.fillAmount = m_CursorData.FillPercent;
+            }
+        }
     }
 }

@@ -3,7 +3,6 @@ using UnityEngine;
 
 [SelectionBase]
 [DisallowMultipleComponent]
-[RequireComponent(typeof(IDamagable))]
 public class EnemyActions : MonoBehaviour, IMovementProvider, IWeaponInputProvider
 {
     public Vector2 MovementDirection { get; set; }
@@ -11,10 +10,13 @@ public class EnemyActions : MonoBehaviour, IMovementProvider, IWeaponInputProvid
     public bool UseCursor => false;
     public Vector2 FaceDirection { get; set; }
 
-    public event Action FireEvent;
+    public event Action<bool> FireEvent;
     public event Action ReloadEvent;
 
+    [SerializeField] private float m_FireFrequency;
+
     private IDamagable m_Damagable;
+    private float m_LastFireTime;
 
     public Targetable LastTarget { get; private set; }
 
@@ -25,7 +27,29 @@ public class EnemyActions : MonoBehaviour, IMovementProvider, IWeaponInputProvid
 
     void Start()
     {
-        m_Damagable.DamageEvent += OnDamage;
+        if (m_Damagable != null)
+        {
+            m_Damagable.DamageEvent += OnDamage;
+        }
+    }
+
+    private void Update()
+    {
+        // If wants to fire, fire
+        if (WantsToFire)
+        {
+            // If enough time has passed, call the event with the down field set to true
+            // In case the weapon is single fire.
+            if (Time.time + 1f / m_FireFrequency > m_LastFireTime)
+            {
+                FireEvent?.Invoke(true);
+                m_LastFireTime = Time.time;
+            }
+            else
+            {
+                FireEvent?.Invoke(false);
+            }
+        }
     }
 
     private void OnDamage(GameObject damager, int damage, Vector3 point, Vector3 direction)

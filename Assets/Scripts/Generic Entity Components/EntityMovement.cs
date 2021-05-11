@@ -10,6 +10,9 @@ public class EntityMovement : MonoBehaviour
     [SerializeField] private float m_Acceleration;
 
     [Space]
+    [SerializeField] private float m_DirectionalSmoothing;
+
+    [Space]
     [SerializeField] private Transform m_LookContainer;
 
     private IMovementProvider m_MovementProvider;
@@ -55,6 +58,17 @@ public class EntityMovement : MonoBehaviour
     {
         // Face the player towards the face direction
         Vector2 faceDirection = m_MovementProvider.FaceDirection;
-        m_LookContainer.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(faceDirection.y, faceDirection.x) * Mathf.Rad2Deg);
+        Vector2 currentDirection = Util.VectorFromAngle(m_LookContainer.eulerAngles.z);
+
+        float angleCross = Vector3.Cross(currentDirection, faceDirection).z;
+
+        if (m_DirectionalSmoothing > 0)
+        {
+            m_LookContainer.rotation *= Quaternion.Euler(0f, 0f, angleCross / m_DirectionalSmoothing * Time.deltaTime);
+        }
+        else
+        {
+            m_LookContainer.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(faceDirection.y, faceDirection.x) * Mathf.Rad2Deg);
+        }
     }
 }

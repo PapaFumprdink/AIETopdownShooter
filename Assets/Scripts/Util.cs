@@ -16,4 +16,14 @@ public static class Util
             return val % max;
         }
     }
+
+    public static Vector2 VectorFromAngle(float angle) => new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
+
+    public static float AngleDifference (float angleA, float angleB)
+    {
+        float optionA = angleA - angleB;
+        float optionB = angleB - angleA;
+
+        return Mathf.Abs(optionA) < Mathf.Abs(optionB) ? optionA : optionB;
+    }
 }

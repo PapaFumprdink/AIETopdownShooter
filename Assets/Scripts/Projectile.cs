@@ -39,11 +39,21 @@ public class Projectile : MonoBehaviour
         var hit = Physics2D.Raycast(m_Rigidbody.position, m_Rigidbody.velocity, speed * Time.deltaTime + SkinWidth);
         if (hit)
         {
-            // if the hit object has a health component, damage it.
-            var health = hit.transform.GetComponent<IDamagable>();
-            if (health != null)
+            GameObject hitObject = hit.transform.gameObject;
+
+            Rigidbody2D hitRigidbody = hit.rigidbody;
+            if (hitRigidbody)
             {
-                health.Damage(Shooter, m_Damage, hit.point, m_Rigidbody.velocity.normalized);
+                hitObject = hit.rigidbody.gameObject;
+
+                hitRigidbody.AddForceAtPosition(m_Rigidbody.velocity * m_Rigidbody.mass, hit.point);
+            }
+
+            // if the hit object has a health component, damage it.
+            IDamagable hitHealth = hitObject.GetComponent<IDamagable>();
+            if (hitHealth != null)
+            {
+                hitHealth.Damage(Shooter, m_Damage, hit.point, m_Rigidbody.velocity.normalized);
             }
 
             // Place and show the hit fx.

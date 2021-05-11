@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(ContactDamage))]
 public class BullyBehaviour : EnemyBrain
 {
     [Space]
@@ -17,15 +16,24 @@ public class BullyBehaviour : EnemyBrain
 
         m_ContactDamage = GetComponent<ContactDamage>();
 
-        m_ContactDamage.DamageDeltEvent += (target) => AttachedRigidbody.velocity += (Vector2)(transform.position - target.transform.position).normalized * m_DamageDeltKnockback;
+        if (m_ContactDamage)
+        {
+            m_ContactDamage.DamageDeltEvent += (target) =>
+            {
+                // If we did damage to a collided object, knock ourselves back.
+                AttachedRigidbody.velocity += (Vector2)(transform.position - target.transform.position).normalized * m_DamageDeltKnockback;
+            };
+        }
     }
 
     public override void Think()
     {
-        var target = GetTarget();
+        // Store the best target.
+        Targetable target = GetTarget();
 
         if (target)
         {
+            // If we have a target and not stunned, chase it down
             if (Time.time > m_ContactDamage.LastDamageDeltTime + m_DamageDeltStunTime)
             {
                 MoveTowards(target);

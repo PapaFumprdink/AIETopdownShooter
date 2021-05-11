@@ -8,14 +8,13 @@ public class PlayerController : MonoBehaviour, IMovementProvider, IWeaponInputPr
 {
     private const float Deadzone = 0.5f;
 
-    public event Action FireEvent;
+    public event Action<bool> FireEvent;
     public event Action ReloadEvent;
 
     private Controls m_Controls;
     private Camera m_MainCamera;
 
     public Vector2 MovementDirection => m_Controls.General.Movement.ReadValue<Vector2>();
-    public bool WantsToFire => m_Controls.General.Fire.ReadValue<float>() > Deadzone;
     public bool UseCursor => true;
     public Vector2 FaceDirection { get; private set; }
 
@@ -27,7 +26,7 @@ public class PlayerController : MonoBehaviour, IMovementProvider, IWeaponInputPr
         // Instantates the controls and subscribes to all used events.
         m_Controls = new Controls();
 
-        m_Controls.General.Fire.performed += (ctx) => FireEvent?.Invoke();
+        m_Controls.General.Fire.performed += (ctx) => FireEvent?.Invoke(true);
         m_Controls.General.Reload.performed += (ctx) => ReloadEvent?.Invoke();
     }
 
@@ -43,7 +42,16 @@ public class PlayerController : MonoBehaviour, IMovementProvider, IWeaponInputPr
 
     private void Update()
     {
+        CheckInputs();
         UpdateLookDirection();
+    }
+
+    private void CheckInputs()
+    {
+        if (m_Controls.General.Fire.ReadValue<float>() > Deadzone)
+        {
+            FireEvent?.Invoke(false);
+        }
     }
 
     private void UpdateLookDirection()

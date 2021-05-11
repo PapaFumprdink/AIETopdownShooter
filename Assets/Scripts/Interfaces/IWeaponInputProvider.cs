@@ -3,8 +3,7 @@ using UnityEngine;
 
 public interface IWeaponInputProvider
 {
-    event Action FireEvent;
+    event Action<bool> FireEvent;
     event Action ReloadEvent;
-    bool WantsToFire { get; }
-    bool UseCursor { get;  } 
+    bool UseCursor { get; } 
 }

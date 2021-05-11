@@ -27,6 +27,11 @@ public class ProjectileGun : MonoBehaviour
     [SerializeField] private CinemachineImpulseSource m_ShakeSource;
     [SerializeField] private ParticleSystem[] m_ShootFXs;
 
+    [Space]
+    [SerializeField] private CustomCursor m_CursorObject;
+    [SerializeField] private Sprite m_CursorImage;
+    [SerializeField] private Sprite m_CursorReloadImage;
+
     private int m_CurrentMagazine;
     private float m_NextFireTime;
     private bool m_IsReloading;
@@ -50,9 +55,9 @@ public class ProjectileGun : MonoBehaviour
         InputProvider = GetComponentInParent<IWeaponInputProvider>();
 
         // Subscribes to nessecary events.
-        InputProvider.FireEvent += () =>
+        InputProvider.FireEvent += (bool down) =>
         {
-            if (m_Singlefire && enabled && gameObject.activeSelf)
+            if (m_Singlefire == down && enabled && gameObject.activeSelf)
             {
                 Shoot();
             }
@@ -61,6 +66,15 @@ public class ProjectileGun : MonoBehaviour
 
         // Set the current magazine so the player does not have to initially reload.
         m_CurrentMagazine = m_MagazineSize;
+    }
+
+    private void OnEnable()
+    {
+        if (InputProvider.UseCursor)
+        {
+            m_CursorObject.FillPercent = 1f;
+            m_CursorObject.CursorIcon = m_CursorImage;
+        }
     }
 
     private void OnDisable()
@@ -72,15 +86,7 @@ public class ProjectileGun : MonoBehaviour
 
     private void Update()
     {
-        if (InputProvider != null)
-        {
-            if (InputProvider.WantsToFire && !m_Singlefire)
-            {
-                Shoot();
-            }
-
-        }
-        else
+        if (InputProvider == null)
         {
             // If we dont have an input provider, keep looking.
             InputProvider = GetComponentInParent<IWeaponInputProvider>();
@@ -142,14 +148,47 @@ public class ProjectileGun : MonoBehaviour
 
     private IEnumerator ReloadRoutine()
     {
+        if (InputProvider.UseCursor)
+        {
+            m_CursorObject.FillPercent = 0f;
+            m_CursorObject.CursorIcon = m_CursorReloadImage;
+        }
+
         m_IsReloading = true;
         m_CurrentMagazine = 0;
 
         ReloadEvent?.Invoke();
 
-        yield return new WaitForSeconds(m_Reloadtime);
+        float percent = 0f;
+        while (percent < 1f)
+        {
+            if (InputProvider.UseCursor)
+            {
+                m_CursorObject.FillPercent = percent;
+            }
+
+            percent += Time.deltaTime / m_Reloadtime;
+            yield return null;
+        }
 
         m_CurrentMagazine = m_MagazineSize;
         m_IsReloading = false;
+
+        if (InputProvider.UseCursor)
+        {
+            m_CursorObject.FillPercent = 1f;
+            m_CursorObject.CursorIcon = m_CursorImage;
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (m_Muzzle)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(transform.position, Quaternion.Euler(0f, 0f, m_Spray) * m_Muzzle.right);
+            Gizmos.DrawRay(transform.position, Quaternion.Euler(0f, 0f, -m_Spray) * m_Muzzle.right);
+            Gizmos.color = Color.white;
+        }
     }
 }
