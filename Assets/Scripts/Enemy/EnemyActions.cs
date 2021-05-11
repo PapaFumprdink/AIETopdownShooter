@@ -9,7 +9,7 @@ public class EnemyActions : MonoBehaviour, IMovementProvider, IWeaponInputProvid
     public Vector2 MovementDirection { get; set; }
     public bool WantsToFire { get; set; }
     public bool UseCursor => false;
-    public Vector2 Direction { get; set; }
+    public Vector2 FaceDirection { get; set; }
 
     public event Action FireEvent;
     public event Action ReloadEvent;

@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour, IMovementProvider, IWeaponInputPr
     public Vector2 MovementDirection => m_Controls.General.Movement.ReadValue<Vector2>();
     public bool WantsToFire => m_Controls.General.Fire.ReadValue<float>() > Deadzone;
     public bool UseCursor => true;
-    public Vector2 Direction { get; private set; }
+    public Vector2 FaceDirection { get; private set; }
 
     private void Awake()
     {
@@ -51,6 +51,6 @@ public class PlayerController : MonoBehaviour, IMovementProvider, IWeaponInputPr
         // Finds the world position of the mouse, then sets the look direction to face towards it.
         var mousePosition = Mouse.current.position.ReadValue();
         var mouseWorldPosition = m_MainCamera.ScreenToWorldPoint(mousePosition);
-        Direction = (mouseWorldPosition - transform.position).normalized;
+        FaceDirection = (mouseWorldPosition - transform.position).normalized;
     }
 }

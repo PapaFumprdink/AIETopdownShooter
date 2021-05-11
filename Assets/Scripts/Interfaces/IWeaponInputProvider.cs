@@ -7,5 +7,4 @@ public interface IWeaponInputProvider
     event Action ReloadEvent;
     bool WantsToFire { get; }
     bool UseCursor { get;  } 
-    Vector2 Direction { get; }
 }

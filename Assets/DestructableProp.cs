@@ -23,7 +23,7 @@ public class DestructableProp : MonoBehaviour, IDamagable
 
     private void Awake()
     {
-        m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        m_SpriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     public void Damage(GameObject damager, int damage, Vector3 point, Vector3 direction)

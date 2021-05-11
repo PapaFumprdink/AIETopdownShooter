@@ -97,7 +97,7 @@ public abstract class EnemyBrain : MonoBehaviour
     protected void FaceTowards(Transform transform) => FaceTowards(transform.position);
     protected void FaceTowards(Vector3 position)
     {
-        EnemyActions.Direction = (position - transform.position).normalized;
+        EnemyActions.FaceDirection = (position - transform.position).normalized;
     }
 
     protected void ClearMovement ()

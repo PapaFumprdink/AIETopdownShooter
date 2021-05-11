@@ -9,6 +9,9 @@ public class EntityMovement : MonoBehaviour
     [SerializeField] private float m_MaxSpeed;
     [SerializeField] private float m_Acceleration;
 
+    [Space]
+    [SerializeField] private Transform m_LookContainer;
+
     private IMovementProvider m_MovementProvider;
     private Rigidbody2D m_Rigidbody;
 
@@ -25,6 +28,7 @@ public class EntityMovement : MonoBehaviour
         if (m_MovementProvider != null)
         {
             Move();
+            Turn();
         }
         else
         {
@@ -45,5 +49,12 @@ public class EntityMovement : MonoBehaviour
         Vector2 acceleration = velocityDifference * m_Acceleration;
 
         m_Rigidbody.velocity += acceleration * Time.deltaTime;
+    }
+
+    private void Turn()
+    {
+        // Face the player towards the face direction
+        Vector2 faceDirection = m_MovementProvider.FaceDirection;
+        m_LookContainer.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(faceDirection.y, faceDirection.x) * Mathf.Rad2Deg);
     }
 }

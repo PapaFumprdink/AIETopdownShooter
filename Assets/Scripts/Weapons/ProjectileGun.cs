@@ -22,7 +22,6 @@ public class ProjectileGun : MonoBehaviour
 
     [Space]
     [SerializeField] private Transform m_Muzzle;
-    [SerializeField] private Transform m_RotationContainer;
 
     [Space]
     [SerializeField] private CinemachineImpulseSource m_ShakeSource;
@@ -80,15 +79,10 @@ public class ProjectileGun : MonoBehaviour
                 Shoot();
             }
 
-            // Sets the look container to where the entity is currently facing, using trig instead of transform.right is just in case
-            // unity gets the same rotation through a different axis and ruins everything.
-            var lookAngle = Mathf.Atan2(InputProvider.Direction.y, InputProvider.Direction.x) * Mathf.Rad2Deg;
-            m_RotationContainer.rotation = Quaternion.Euler(0, 0, lookAngle);
-
         }
         else
         {
-            // If we dont have an input provider, keep looking, just in case....
+            // If we dont have an input provider, keep looking.
             InputProvider = GetComponentInParent<IWeaponInputProvider>();
         }
     }
