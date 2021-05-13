@@ -61,6 +61,7 @@ public class Health : MonoBehaviour, IDamagable
         {
             // Detach so it does not disable with this object.
             m_DeathFX.transform.parent = null;
+            m_DeathFX.transform.right = direction;
             // Enable death fx.
             m_DeathFX.SetActive(true);
         }

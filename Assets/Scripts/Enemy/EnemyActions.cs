@@ -66,7 +66,7 @@ public class EnemyActions : MonoBehaviour, IMovementProvider, IWeaponInputProvid
         }
     }
 
-    public bool GetBestTarget (TargetType[] possibleTargetTypes, float range, out Targetable bestTarget)
+    public bool GetBestTarget (TargetType[] possibleTargetTypes, float range, float sightDot, bool needsLineOfSight, out Targetable bestTarget)
     {
         // Checks if the last target is still valid, if so use it.
         if (LastTarget)
@@ -81,7 +81,7 @@ public class EnemyActions : MonoBehaviour, IMovementProvider, IWeaponInputProvid
         // Otherwise, loop through each layer and find a possible target.
         foreach (TargetType targetType in possibleTargetTypes)
         {
-            if (Targetable.TryFindTarget(targetType, transform.position, range, out Targetable target))
+            if (Targetable.TryFindTarget(targetType, transform.position, FaceDirection, range, sightDot, needsLineOfSight, out Targetable target))
             {
                 bestTarget = target;
                 return true;
@@ -90,5 +90,10 @@ public class EnemyActions : MonoBehaviour, IMovementProvider, IWeaponInputProvid
 
         bestTarget = null;
         return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawRay(transform.position, FaceDirection * 10f);
     }
 }

@@ -9,13 +9,34 @@ using UnityEngine;
 public abstract class EnemyBrain : MonoBehaviour
 {
     [SerializeField] protected TargetType[] m_TargetableTypes;
+
+    [Space]
     [SerializeField] protected float m_TargetMaxRange;
+    [SerializeField] protected bool m_NeedsLineOfSight;
+    [SerializeField] private float m_SightDot;
+
+    [Space]
     [SerializeField] protected float m_ObstacleAvoidanceRange;
     [SerializeField] protected float m_ObstacleAvoidanceMaxAngle;
 
+    [Space]
+    [SerializeField] private float m_ReactionTime;
+    [SerializeField] private float m_AttentionSpan;
+    [SerializeField] private float m_AlertPoint;
+
+    [Space]
+    [SerializeField] private SpriteRenderer m_AlertRenderer;
+    [SerializeField] private SpriteRenderer m_AlertBackgroundRenderer;
+    [SerializeField] private Sprite m_AlertIcon;
+    [SerializeField] private Sprite m_ActiveIcon;
+    [SerializeField] private Sprite m_AlertBackgroundIcon;
+    [SerializeField] private Sprite m_ActiveBackgroundIcon;
+
+    public Targetable Target { get; private set; }
     public EnemyActions EnemyActions { get; private set; }
     public Rigidbody2D AttachedRigidbody { get; private set; }
     public bool WantsToFire { get => EnemyActions.WantsToFire; set => EnemyActions.WantsToFire = value; }
+    public float DetectionPercent { get; private set; }
 
     public abstract void Think();
 
@@ -27,20 +48,44 @@ public abstract class EnemyBrain : MonoBehaviour
 
     private void Update()
     {
-        Think();
-    }
+        Target = GetTarget();
 
-    protected Targetable GetTarget ()
-    {
-        foreach (TargetType type in m_TargetableTypes)
+        if (Target)
         {
-            if (Targetable.TryFindTarget(type, transform.position, m_TargetMaxRange, out Targetable bestTarget))
-            {
-                return bestTarget;
-            }
+            DetectionPercent = Mathf.Clamp01(DetectionPercent + Time.deltaTime / m_ReactionTime);
+        }
+        else
+        {
+            DetectionPercent = Mathf.Clamp01(DetectionPercent - Time.deltaTime / m_AttentionSpan);
         }
 
-        return null;
+        Think();
+
+        switch (DetectionPercent)
+        {
+            case float percent when percent > m_AlertPoint:
+                m_AlertRenderer.sprite = m_AlertIcon;
+                m_AlertRenderer.size = new Vector2(1f, (DetectionPercent - m_AlertPoint) / (1 - m_AlertPoint));
+
+                m_AlertBackgroundRenderer.sprite = m_AlertBackgroundIcon;
+                break;
+            case float percent when percent > 0.05f:
+                m_AlertRenderer.sprite = m_ActiveIcon;
+                m_AlertRenderer.size = new Vector2(1f, DetectionPercent / m_AlertPoint);
+
+                m_AlertBackgroundRenderer.sprite = m_ActiveBackgroundIcon;
+                break;
+            default:
+                m_AlertRenderer.sprite = null;
+                m_AlertBackgroundRenderer.sprite = null;
+                break;
+        }
+    }
+
+    protected Targetable GetTarget()
+    {
+        EnemyActions.GetBestTarget(m_TargetableTypes, m_TargetMaxRange, m_SightDot, m_NeedsLineOfSight, out Targetable bestTarget);
+        return bestTarget;
     }
 
     protected Vector2 CalulateObstacleAvoidance(GameObject target, Vector2 initialDirection)
@@ -96,12 +141,13 @@ public abstract class EnemyBrain : MonoBehaviour
     protected void FaceTowards(MonoBehaviour behaviour) => FaceTowards(behaviour.gameObject);
     protected void FaceTowards(GameObject gameObject) => FaceTowards(gameObject.transform);
     protected void FaceTowards(Transform transform) => FaceTowards(transform.position);
-    protected void FaceTowardsAngle(Quaternion rotation) => FaceTowardsAngle(rotation.z);
-    protected void FaceTowardsAngle(float angle) => FaceTowards(Util.VectorFromAngle(angle) + (Vector2)transform.position);
     protected void FaceTowards(Vector3 position)
     {
         EnemyActions.FaceDirection = (position - transform.position).normalized;
     }
+
+    protected void FaceTowardsAngle(Quaternion rotation) => FaceTowardsAngle(rotation.z);
+    protected void FaceTowardsAngle(float angle) => EnemyActions.FaceDirection = Util.VectorFromAngle(angle);
 
     protected void ClearMovement ()
     {
@@ -110,8 +156,11 @@ public abstract class EnemyBrain : MonoBehaviour
 
     protected virtual void OnDrawGizmosSelected()
     {
+
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, m_TargetMaxRange);
+        float angle = Mathf.Acos(Mathf.Clamp(m_SightDot, -1f, 1f)) * Mathf.Rad2Deg;
+        Gizmos.DrawRay(transform.position, Quaternion.Euler(0f, 0f, angle) * transform.right * m_TargetMaxRange);
+        Gizmos.DrawRay(transform.position, Quaternion.Euler(0f, 0f, -angle) * transform.right * m_TargetMaxRange);
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawRay(transform.position, Quaternion.Euler(0, 0, -m_ObstacleAvoidanceMaxAngle) * Vector3.right * m_ObstacleAvoidanceRange);

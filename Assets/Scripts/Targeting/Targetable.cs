@@ -20,13 +20,13 @@ public class Targetable : MonoBehaviour
         TargetInstances[m_TargetType].Add(this);
     }
 
-    public static bool TryFindTarget (TargetType type, Vector3 position, float range, out Targetable bestTarget)
+    public static bool TryFindTarget(TargetType type, Vector3 position, Vector2 direction, float range, float sightDot, bool needsLineOfSight, out Targetable bestTarget)
     {
-        bestTarget = FindTarget(type, position, range);
+        bestTarget = FindTarget(type, position, direction, range, sightDot, needsLineOfSight);
         return bestTarget;
     }
 
-    public static Targetable FindTarget (TargetType type, Vector3 position, float range)
+    public static Targetable FindTarget (TargetType type, Vector3 position, Vector3 direction, float range, float sightDot, bool needsLineOfSight)
     {
         Targetable bestTarget = null;
 
@@ -37,25 +37,35 @@ public class Targetable : MonoBehaviour
             {
                 if (target != null)
                 {
-                    var vectorToTarget = (target.transform.position - position);
-
-                    // Check that target is active and it is within range.
-                    // Vector2.sqrMagnitude skips a square root call, used for performance.
-                    if (target.isActiveAndEnabled && vectorToTarget.sqrMagnitude < range * range)
+                    if (Vector2.Dot((target.transform.position - position).normalized, direction.normalized) > sightDot)
                     {
-                        if (!bestTarget)
-                        {
-                            bestTarget = target;
-                        }
-                        else
-                        {
-                            var vectorToBestTarget = (bestTarget.transform.position - position);
+                        var vectorToTarget = (target.transform.position - position);
+                        RaycastHit2D hit = Physics2D.Raycast(position, target.transform.position - position, range);
 
-                            // Choose this target if it is closest.
-                            // Vector2.sqrMagnitude skips a square root call, used for performance.
-                            if (vectorToTarget.sqrMagnitude < vectorToBestTarget.magnitude)
+                        if (hit)
+                        {
+                            if (hit.transform == target.transform)
                             {
-                                bestTarget = target;
+                                // Check that target is active and it is within range.
+                                // Vector2.sqrMagnitude skips a square root call, used for performance.
+                                if (target.isActiveAndEnabled && vectorToTarget.sqrMagnitude < range * range)
+                                {
+                                    if (!bestTarget)
+                                    {
+                                        bestTarget = target;
+                                    }
+                                    else
+                                    {
+                                        var vectorToBestTarget = (bestTarget.transform.position - position);
+
+                                        // Choose this target if it is closest.
+                                        // Vector2.sqrMagnitude skips a square root call, used for performance.
+                                        if (vectorToTarget.sqrMagnitude < vectorToBestTarget.magnitude)
+                                        {
+                                            bestTarget = target;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
